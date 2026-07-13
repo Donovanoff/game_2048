@@ -1,10 +1,31 @@
-# game 2048
+# 🧩 2048 Game
 
-In this layout, I implemented the classic game of 2048 using JavaScript. The game features a 4x4 grid where players can move cells using keyboard arrow keys. Additionally, the game is optimized for mobile devices, allowing users to enjoy gameplay through swipe gestures. This makes the game convenient for players using various types of devices and enhances the overall gaming experience.
-The objective is to merge cells with the same numbers to create larger numbers, with the ultimate goal of reaching the elusive 2048 tile.
+![2048 Game](https://img.shields.io/badge/Status-Completed-success?style=flat-square) ![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black) ![SCSS](https://img.shields.io/badge/SCSS-Styled-CC6699?style=flat-square&logo=sass&logoColor=white)
 
-The game follows the standard rules of 2048, including merging cells, adding new tiles after each move, and displaying win or game over messages accordingly. The score increases with each move, with the score being incremented by the sum of all merged cells.
+A fully functional, web-based clone of the classic **2048** puzzle game built entirely from scratch using Vanilla JavaScript, HTML5, and SCSS. 
 
-The project is divided into two main parts: the game logic written on JS, and the game UI implemented in HTML and SCSS. The UI dynamically updates based on the game state, providing a seamless and engaging user experience.
+🎮 **[Play the Demo Here!](https://Donovanoff.github.io/game_2048/)**
 
-- [DEMO LINK](https://Donovanoff.github.io/game_2048/)
+## ✨ Features
+
+- **Classic Gameplay:** Standard 4x4 grid. Merge tiles with the same number to double their value and reach the elusive 2048 tile!
+- **Mobile Friendly:** Fully responsive design with **swipe gesture support** for seamless gameplay on smartphones and tablets.
+- **Keyboard Navigation:** Play comfortably using the `Arrow Keys` or `W`, `A`, `S`, `D`.
+- **Score Tracking:** Keeps track of your current score and saves your **Best Score** locally using `localStorage`.
+- **Smooth UI:** Engaging visual feedback with tile appearance animations and clean, SCSS-based styling.
+
+## 🛠 Technologies Used
+
+- **HTML5:** Semantic structure.
+- **SCSS / CSS3:** BEM-like methodology for clean styling and responsive layout.
+- **Vanilla JavaScript:** All game logic, state management, array manipulations, and DOM updates implemented without external libraries.
+
+## 🚀 How to Play
+
+1. **Start the Game:** Click the "Start" button.
+2. **Move Tiles:** Use your keyboard (`Arrow Keys` or `WASD`) or **swipe** on your mobile device to slide the tiles.
+3. **Merge Tiles:** When two tiles with the same number touch, they merge into one!
+4. **Win Condition:** Create a tile with the number `2048` to win the game. (You can keep playing to increase your score!)
+
+---
+*Created by [Rostyslav Sobchyshyn]*

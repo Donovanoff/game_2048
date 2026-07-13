@@ -2,6 +2,7 @@
 
 let board;
 let score = 0;
+let bestScore = localStorage.getItem('2048-best-score') || 0;
 const rows = 4;
 const columns = 4;
 const startMessage = document.querySelector('.message-start');
@@ -13,8 +14,13 @@ const LEFT = 'ArrowLeft';
 const RIGHT = 'ArrowRight';
 const UP = 'ArrowUp';
 const DOWN = 'ArrowDown';
+const W = 'KeyW';
+const A = 'KeyA';
+const S = 'KeyS';
+const D = 'KeyD';
 
 window.onload = function() {
+  document.querySelector('.game-best-score').innerHTML = bestScore;
   setGame();
 };
 
@@ -61,23 +67,27 @@ document.addEventListener('keyup', e => {
 
   switch (e.code) {
     case LEFT:
+    case A:
       slideLeft();
       break;
 
     case RIGHT:
+    case D:
       slideRight();
       break;
 
     case UP:
+    case W:
       slideUp();
       break;
 
     case DOWN:
+    case S:
       slideDown();
       break;
   }
 
-  document.querySelector('.game-score').innerHTML = score;
+  updateScores();
 
   if (isGameOver()) {
     loseMessage.classList.remove('hidden');
@@ -87,6 +97,15 @@ document.addEventListener('keyup', e => {
     winMessage.classList.remove('hidden');
   }
 });
+
+function updateScores() {
+  document.querySelector('.game-score').innerHTML = score;
+  if (score > bestScore) {
+    bestScore = score;
+    localStorage.setItem('2048-best-score', bestScore);
+    document.querySelector('.game-best-score').innerHTML = bestScore;
+  }
+}
 
 // for mobile-devices
 let startX, startY, endX, endY;
@@ -130,7 +149,7 @@ document.addEventListener('touchend', e => {
     }
   }
 
-  document.querySelector('.game-score').innerHTML = score;
+  updateScores();
 
   if (isGameOver()) {
     loseMessage.classList.remove('hidden');
@@ -161,7 +180,7 @@ button.addEventListener('click', () => {
 
 function resetGame() {
   score = 0;
-  document.querySelector('.game-score').innerHTML = score;
+  updateScores();
   winMessage.classList.add('hidden');
   loseMessage.classList.add('hidden');
   startMessage.classList.remove('hidden');
@@ -350,6 +369,8 @@ function setNum() {
       board[r][c] = num;
       tile.innerText = num;
       tile.classList.add(`field-cell--${num}`);
+      tile.classList.add('new-tile');
+      setTimeout(() => tile.classList.remove('new-tile'), 200);
       found = true;
     }
   }
