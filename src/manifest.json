@@ -1,0 +1,17 @@
+{
+  "name": "2048 Game",
+  "short_name": "2048",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#faf8ef",
+  "theme_color": "#bbada0",
+  "description": "Play 2048 on your phone",
+  "icons": [
+    {
+      "src": "./images/favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "portrait-primary"
+}

@@ -7,9 +7,14 @@
     <link rel="stylesheet" href="./styles/main.scss">
     <link
       rel="icon"
-      type="image/png"
-      href="./images/favicon.png"
+      type="image/svg+xml"
+      href="./images/favicon.svg"
     >
+    <link rel="apple-touch-icon" href="./images/favicon.png">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#bbada0">
   </head>
   <body>
     <div class="container">
@@ -30,12 +35,43 @@
       </div>
 
       <div class="message-container">
-        <p class="message message-lose hidden">You lose! Restart the game?</p>
-        <p class="message message-win hidden">Winner! Congrats! You did it!</p>
+
         <p class="message message-start">Press "Start" to begin game. Good luck!</p>
         <p class="message">Rostyslav Sobchyshyn</p>
+        <button id="install-btn" class="button start install-btn">Add to Home Screen</button>
       </div>
     </div>
+    <div class="modal-overlay hidden" id="resume-modal">
+      <div class="modal-content">
+        <p class="modal-message">Would you like to continue your last game?</p>
+        <div class="modal-buttons">
+          <button id="resume-yes" class="button start">Continue</button>
+          <button id="resume-no" class="button restart">New Game</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-overlay hidden" id="lose-modal">
+      <div class="modal-content">
+        <p class="modal-message">Game Over!</p>
+        <div class="modal-buttons">
+          <button id="lose-restart" class="button restart">Try Again</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="win-modal">
+      <div class="modal-content">
+        <p class="modal-message">You Win! Congrats!</p>
+        <div class="modal-buttons">
+          <button id="win-continue" class="button start">Keep Going</button>
+          <button id="win-restart" class="button restart">New Game</button>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
     <script type="text/javascript" src="scripts/main.js"></script>
   </body>
 </html>

@@ -6,9 +6,38 @@ let bestScore = localStorage.getItem('2048-best-score') || 0;
 const rows = 4;
 const columns = 4;
 const startMessage = document.querySelector('.message-start');
-const winMessage = document.querySelector('.message-win');
-const loseMessage = document.querySelector('.message-lose');
+const winMessage = document.getElementById('win-modal');
+const loseMessage = document.getElementById('lose-modal');
 const button = document.querySelector('.button');
+let hasWon = false;
+
+if (loseMessage) {
+  document.getElementById('lose-restart').addEventListener('click', () => {
+    loseMessage.classList.add('hidden');
+
+    if (gameStarted) {
+      button.click();
+    }
+    button.click();
+  });
+}
+
+if (winMessage) {
+  document.getElementById('win-continue').addEventListener('click', () => {
+    winMessage.classList.add('hidden');
+  });
+
+  document.getElementById('win-restart').addEventListener('click', () => {
+    winMessage.classList.add('hidden');
+    hasWon = false;
+
+    if (gameStarted) {
+      button.click();
+    };
+    button.click();
+  });
+}
+
 let gameStarted = false;
 const LEFT = 'ArrowLeft';
 const RIGHT = 'ArrowRight';
@@ -21,7 +50,61 @@ const D = 'KeyD';
 
 window.onload = function() {
   document.querySelector('.game-best-score').innerHTML = bestScore;
-  setGame();
+
+  const savedBoard = localStorage.getItem('2048-board');
+  const savedScore = localStorage.getItem('2048-score');
+
+  if (savedBoard && savedScore) {
+    const modal = document.getElementById('resume-modal');
+    const btnYes = document.getElementById('resume-yes');
+    const btnNo = document.getElementById('resume-no');
+
+    modal.classList.remove('hidden');
+
+    btnYes.onclick = () => {
+      modal.classList.add('hidden');
+
+      try {
+        board = JSON.parse(savedBoard);
+        score = parseInt(savedScore, 10);
+        document.querySelector('.game-score').innerHTML = score;
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < columns; c++) {
+            const tile = document.createElement('div');
+
+            tile.classList.add('field-cell');
+            tile.id = r.toString() + '-' + c.toString();
+
+            const num = board[r][c];
+
+            updateTile(tile, num);
+            document.querySelector('.game-field').append(tile);
+          }
+        }
+
+        button.classList.remove('start');
+        button.classList.add('restart');
+        button.innerHTML = 'Restart';
+        startMessage.classList.add('hidden');
+        gameStarted = true;
+      } catch (e) {
+        setGame();
+      }
+    };
+
+    btnNo.onclick = () => {
+      modal.classList.add('hidden');
+      localStorage.removeItem('2048-board');
+      localStorage.removeItem('2048-score');
+      setGame();
+      button.click();
+    };
+  } else {
+    localStorage.removeItem('2048-board');
+    localStorage.removeItem('2048-score');
+    setGame();
+  }
 };
 
 function setGame() {
@@ -93,17 +176,34 @@ document.addEventListener('keyup', e => {
     loseMessage.classList.remove('hidden');
   }
 
-  if (isWinner()) {
+  if (!hasWon && isWinner()) {
     winMessage.classList.remove('hidden');
+    hasWon = true;
   }
+
+  saveGameState();
 });
 
 function updateScores() {
   document.querySelector('.game-score').innerHTML = score;
+
   if (score > bestScore) {
     bestScore = score;
     localStorage.setItem('2048-best-score', bestScore);
     document.querySelector('.game-best-score').innerHTML = bestScore;
+  }
+}
+
+function saveGameState() {
+  if (!gameStarted) {
+    return;
+  }
+
+  try {
+    localStorage.setItem('2048-board', JSON.stringify(board));
+    localStorage.setItem('2048-score', score);
+  } catch (e) {
+    // Ignore error if localStorage is not available
   }
 }
 
@@ -158,6 +258,8 @@ document.addEventListener('touchend', e => {
   if (isWinner()) {
     winMessage.classList.remove('hidden');
   }
+
+  saveGameState();
 });
 
 button.addEventListener('click', () => {
@@ -167,6 +269,8 @@ button.addEventListener('click', () => {
     button.innerHTML = 'Start';
     gameStarted = false;
     resetGame();
+    localStorage.removeItem('2048-board');
+    localStorage.removeItem('2048-score');
   } else {
     button.classList.remove('start');
     button.classList.add('restart');
@@ -175,15 +279,24 @@ button.addEventListener('click', () => {
     gameStarted = true;
     setNum();
     setNum();
+    saveGameState();
   }
 });
 
 function resetGame() {
   score = 0;
   updateScores();
-  winMessage.classList.add('hidden');
-  loseMessage.classList.add('hidden');
+
+  if (winMessage) {
+    winMessage.classList.add('hidden');
+  };
+
+  if (loseMessage) {
+    loseMessage.classList.add('hidden');
+  };
+
   startMessage.classList.remove('hidden');
+  hasWon = false;
 
   board = [
     [0, 0, 0, 0],
@@ -422,3 +535,32 @@ function arraysEqual(arr1, arr2) {
 
   return true;
 }
+
+// PWA Install Button Logic
+let deferredPrompt;
+const installBtn = document.getElementById('install-btn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
+});
+
+installBtn.addEventListener('click', async() => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === 'accepted') {
+      // Ignored console log for linter compliance
+    }
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  installBtn.style.display = 'none';
+  deferredPrompt = null;
+});

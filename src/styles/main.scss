@@ -1,3 +1,11 @@
+:root {
+  --size: clamp(50px, 18vw, 75px);
+  --gap: clamp(5px, 2vw, 10px);
+  --info-font: clamp(14px, 4.5vw, 16px);
+  --title-font: clamp(18px, 6vw, 24px);
+  --btn-font: clamp(14px, 4.5vw, 20px);
+}
+
 body {
   box-sizing: border-box;
   margin: 0;
@@ -101,30 +109,31 @@ body {
 
 .game-field {
   display: grid;
-  grid-template-columns: repeat(4, 75px);
-  grid-template-rows: repeat(4, 75px);
-  gap: 10px;
-  border: 10px solid #bbada0;
+  grid-template-columns: repeat(4, var(--size));
+  grid-template-rows: repeat(4, var(--size));
+  gap: var(--gap);
+  border: var(--gap) solid #bbada0;
   border-radius: 10px;
   background: #bbada0;
   transition: 0.3s;
+  touch-action: none;
 }
 
 .game-header {
   display: flex;
-  width: 100%;
+  width: calc((var(--size) * 4) + (var(--gap) * 5));
+  padding: 0 var(--gap);
+  box-sizing: border-box;
   justify-content: space-between;
   margin-bottom: 24px;
-  padding: 10px;
-  box-sizing: border-box;
 }
 
 h1 {
   background: #edc22e;
   color: #f6ecde;
-  width: 75px;
-  height: 75px;
-  font-size: 24px;
+  width: var(--size);
+  height: var(--size);
+  font-size: var(--title-font);
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -139,20 +148,21 @@ h1 {
   align-items: center;
   justify-content: center;
   background: #d6cdc4;
-  width: 75px;
-  height: 75px;
+  width: var(--size);
+  height: var(--size);
   border-radius: 5px;
   color: #776e65;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: var(--info-font);
   line-height: 1.2;
-  margin: 0 10px 0 0;
   text-align: center;
   font-weight: bold;
+  margin: 0;
 }
 
 .controls {
   display: flex;
+  gap: var(--gap);
 }
 
 .button {
@@ -165,9 +175,9 @@ h1 {
   color: #f6ecde;
   font-family: sans-serif;
   font-weight: 700;
-  font-size: 16px;
-  width: 75px;
-  height: 75px;
+  font-size: var(--btn-font);
+  width: var(--size);
+  height: var(--size);
   outline: none;
 
   transition: 0.25s ease background;
@@ -175,15 +185,24 @@ h1 {
 
 .start {
   background: #53b350;
-  font-size: 20px;
+  font-size: var(--btn-font);
 
   &:hover {
     background: #179921;
   }
 }
 
+.install-btn {
+  display: none;
+  width: auto;
+  padding: 0 20px;
+  font-size: 16px;
+  margin: 15px auto 0;
+}
+
 .restart {
-  background: #f39b9b;
+  background: #f87474;
+  font-size: var(--btn-font);
 
   &:hover {
     background: #f87474;
@@ -202,14 +221,14 @@ h1 {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 350px;
+  width: calc((var(--size) * 4) + (var(--gap) * 3) + (var(--gap) * 2));
 }
 
 .message-win {
@@ -220,4 +239,49 @@ h1 {
 .message-container {
   width: 100%;
   height: 150px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  box-sizing: border-box;
+  background: #faf8ef;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-message {
+  color: #776e65;
+  font-size: 20px;
+  margin-bottom: 25px;
+  margin-top: 0;
+  line-height: 1.4;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.modal-buttons .button {
+  width: auto;
+  padding: 0 20px;
 }
