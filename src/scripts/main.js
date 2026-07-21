@@ -252,13 +252,13 @@ function saveGameState() {
 
 function updateUndoBtn() {
   const btn = document.getElementById('undo-btn');
-  const undoIcon = document.querySelector('.undo-icon');
+  const undoContent = document.querySelector('.undo-content');
   const undoCooldownText = document.querySelector('.undo-cooldown');
   const undoBar = document.querySelector('.undo-bar');
 
   if (!previousBoard) {
     btn.disabled = true;
-    undoIcon.classList.remove('hidden');
+    undoContent.classList.remove('hidden');
     undoCooldownText.classList.add('hidden');
     undoBar.style.width = '0%';
 
@@ -267,7 +267,7 @@ function updateUndoBtn() {
 
   if (undoCooldown > 0) {
     btn.disabled = true;
-    undoIcon.classList.add('hidden');
+    undoContent.classList.add('hidden');
     undoCooldownText.classList.remove('hidden');
     undoCooldownText.innerHTML = undoCooldown;
 
@@ -277,7 +277,7 @@ function updateUndoBtn() {
     undoBar.style.width = fillPercentage + '%';
   } else {
     btn.disabled = false;
-    undoIcon.classList.remove('hidden');
+    undoContent.classList.remove('hidden');
     undoCooldownText.classList.add('hidden');
     undoBar.style.width = '100%';
   }
