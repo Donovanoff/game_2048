@@ -10,6 +10,7 @@ A fully functional, web-based clone of the classic **2048** puzzle game built en
 
 - **Classic Gameplay:** Standard 4x4 grid. Merge tiles with the same number to double their value and reach the elusive 2048 tile! (You can also choose to keep playing endlessly!)
 - **Game Persistence (Save & Resume):** The game board and score are automatically saved in `localStorage`. Close the browser and seamlessly resume your session later via a beautifully styled custom dialog.
+- **Undo Mechanic:** Made a mistake? Use the custom "Undo" (1 step back) button to revert your last move. It features a strategic 15-move cooldown with a dynamic visual recharge bar and state persistence.
 - **Progressive Web App (PWA):** Install the game directly to your mobile Home Screen! Runs in full-screen standalone mode with custom SVG/high-res PNG app icons and forced portrait orientation lock.
 - **Advanced Mobile UX:** 
   - Proportional CSS layout scaling (`clamp()`, `vw`) ensuring a pixel-perfect fit on any screen size.
