@@ -24,9 +24,15 @@
           <p class="info">
             Score: <br><span class="game-score">0</span>
           </p>
-          <p class="info">
-            Best: <br><span class="game-best-score">0</span>
-          </p>
+          <button
+            class="button undo-btn"
+            id="undo-btn"
+            disabled
+          >
+            <span class="undo-icon">↺</span>
+            <span class="undo-cooldown hidden">15</span>
+            <div class="undo-bar"></div>
+          </button>
           <button class="button start">Start</button>
         </div>
       </div>
@@ -37,6 +43,7 @@
       <div class="message-container">
 
         <p class="message message-start">Press "Start" to begin game. Good luck!</p>
+        <p class="message">Best Score: <span class="game-best-score">0</span></p>
         <p class="message">Rostyslav Sobchyshyn</p>
         <button id="install-btn" class="button start install-btn">Add to Home Screen</button>
       </div>

@@ -10,6 +10,10 @@ const winMessage = document.getElementById('win-modal');
 const loseMessage = document.getElementById('lose-modal');
 const button = document.querySelector('.button');
 let hasWon = false;
+let previousBoard = null;
+let previousScore = 0;
+let undoCooldown = 0;
+const UNDO_MAX_COOLDOWN = 15;
 
 if (loseMessage) {
   document.getElementById('lose-restart').addEventListener('click', () => {
@@ -53,6 +57,19 @@ window.onload = function() {
 
   const savedBoard = localStorage.getItem('2048-board');
   const savedScore = localStorage.getItem('2048-score');
+
+  const savedPrevBoard = localStorage.getItem('2048-prev-board');
+  const savedPrevScore = localStorage.getItem('2048-prev-score');
+  const savedUndoCooldown = localStorage.getItem('2048-undo-cooldown');
+
+  if (savedPrevBoard) {
+    try {
+      previousBoard = JSON.parse(savedPrevBoard);
+      previousScore = parseInt(savedPrevScore, 10);
+      undoCooldown = parseInt(savedUndoCooldown, 10);
+    } catch (e) {}
+  }
+  updateUndoBtn();
 
   if (savedBoard && savedScore) {
     const modal = document.getElementById('resume-modal');
@@ -149,26 +166,44 @@ document.addEventListener('keyup', e => {
     return;
   }
 
+  const tempBoard = JSON.parse(JSON.stringify(board));
+  const tempScore = score;
+  let moveAttempted = false;
+
   switch (e.code) {
     case LEFT:
     case A:
       slideLeft();
+      moveAttempted = true;
       break;
 
     case RIGHT:
     case D:
       slideRight();
+      moveAttempted = true;
       break;
 
     case UP:
     case W:
       slideUp();
+      moveAttempted = true;
       break;
 
     case DOWN:
     case S:
       slideDown();
+      moveAttempted = true;
       break;
+  }
+
+  if (moveAttempted && JSON.stringify(tempBoard) !== JSON.stringify(board)) {
+    previousBoard = tempBoard;
+    previousScore = tempScore;
+
+    if (undoCooldown > 0) {
+      undoCooldown--;
+    }
+    updateUndoBtn();
   }
 
   updateScores();
@@ -204,8 +239,47 @@ function saveGameState() {
     localStorage.setItem('2048-board', JSON.stringify(board));
     localStorage.setItem('2048-score', score);
     localStorage.setItem('2048-has-won', hasWon);
+
+    if (previousBoard) {
+      localStorage.setItem('2048-prev-board', JSON.stringify(previousBoard));
+      localStorage.setItem('2048-prev-score', previousScore);
+      localStorage.setItem('2048-undo-cooldown', undoCooldown);
+    }
   } catch (e) {
     // Ignore error if localStorage is not available
+  }
+}
+
+function updateUndoBtn() {
+  const btn = document.getElementById('undo-btn');
+  const undoIcon = document.querySelector('.undo-icon');
+  const undoCooldownText = document.querySelector('.undo-cooldown');
+  const undoBar = document.querySelector('.undo-bar');
+
+  if (!previousBoard) {
+    btn.disabled = true;
+    undoIcon.classList.remove('hidden');
+    undoCooldownText.classList.add('hidden');
+    undoBar.style.width = '0%';
+
+    return;
+  }
+
+  if (undoCooldown > 0) {
+    btn.disabled = true;
+    undoIcon.classList.add('hidden');
+    undoCooldownText.classList.remove('hidden');
+    undoCooldownText.innerHTML = undoCooldown;
+
+    const fillPercentage = ((UNDO_MAX_COOLDOWN - undoCooldown)
+      / UNDO_MAX_COOLDOWN) * 100;
+
+    undoBar.style.width = fillPercentage + '%';
+  } else {
+    btn.disabled = false;
+    undoIcon.classList.remove('hidden');
+    undoCooldownText.classList.add('hidden');
+    undoBar.style.width = '100%';
   }
 }
 
@@ -233,22 +307,40 @@ document.addEventListener('touchend', e => {
   const deltaY = endY - startY;
   const minSwipeDistance = 20;
 
+  const tempBoard = JSON.parse(JSON.stringify(board));
+  const tempScore = score;
+  let moveAttempted = false;
+
   if (Math.abs(deltaX) > Math.abs(deltaY)) {
     if (Math.abs(deltaX) > minSwipeDistance) {
       if (deltaX > 0) {
         slideRight();
+        moveAttempted = true;
       } else {
         slideLeft();
+        moveAttempted = true;
       }
     }
   } else {
     if (Math.abs(deltaY) > minSwipeDistance) {
       if (deltaY > 0) {
         slideDown();
+        moveAttempted = true;
       } else {
         slideUp();
+        moveAttempted = true;
       }
     }
+  }
+
+  if (moveAttempted && JSON.stringify(tempBoard) !== JSON.stringify(board)) {
+    previousBoard = tempBoard;
+    previousScore = tempScore;
+
+    if (undoCooldown > 0) {
+      undoCooldown--;
+    }
+    updateUndoBtn();
   }
 
   updateScores();
@@ -265,6 +357,33 @@ document.addEventListener('touchend', e => {
   saveGameState();
 });
 
+const undoBtn = document.getElementById('undo-btn');
+
+if (undoBtn) {
+  undoBtn.addEventListener('click', () => {
+    if (!gameStarted || !previousBoard || undoCooldown > 0) {
+      return;
+    }
+
+    board = JSON.parse(JSON.stringify(previousBoard));
+    score = previousScore;
+    undoCooldown = UNDO_MAX_COOLDOWN;
+
+    // re-render board
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < columns; c++) {
+        const tile = document.getElementById(r.toString() + '-' + c.toString());
+
+        updateTile(tile, board[r][c]);
+      }
+    }
+
+    updateScores();
+    updateUndoBtn();
+    saveGameState();
+  });
+}
+
 button.addEventListener('click', () => {
   if (gameStarted) {
     button.classList.remove('restart');
@@ -275,6 +394,9 @@ button.addEventListener('click', () => {
     localStorage.removeItem('2048-board');
     localStorage.removeItem('2048-score');
     localStorage.removeItem('2048-has-won');
+    localStorage.removeItem('2048-prev-board');
+    localStorage.removeItem('2048-prev-score');
+    localStorage.removeItem('2048-undo-cooldown');
   } else {
     button.classList.remove('start');
     button.classList.add('restart');
@@ -301,6 +423,10 @@ function resetGame() {
 
   startMessage.classList.remove('hidden');
   hasWon = false;
+  previousBoard = null;
+  previousScore = 0;
+  undoCooldown = 0;
+  updateUndoBtn();
 
   board = [
     [0, 0, 0, 0],

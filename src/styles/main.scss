@@ -183,6 +183,45 @@ h1 {
   transition: 0.25s ease background;
 }
 
+.undo-btn {
+  position: relative;
+  overflow: hidden;
+  background: #f59563;
+  color: #f6ecde;
+
+  &:disabled {
+    background: #ccc0b4;
+    cursor: not-allowed;
+    color: #776e65;
+  }
+
+  &:hover:not(:disabled) {
+    background: #e67d4a;
+  }
+
+  .undo-icon {
+    font-size: 32px;
+    font-weight: bold;
+    z-index: 2;
+  }
+
+  .undo-cooldown {
+    font-size: var(--btn-font);
+    z-index: 2;
+  }
+
+  .undo-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    transition: width 0.3s ease;
+  }
+}
+
 .start {
   background: #53b350;
   font-size: var(--btn-font);
