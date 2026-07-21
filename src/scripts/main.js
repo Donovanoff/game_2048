@@ -67,6 +67,7 @@ window.onload = function() {
       try {
         board = JSON.parse(savedBoard);
         score = parseInt(savedScore, 10);
+        hasWon = localStorage.getItem('2048-has-won') === 'true';
         document.querySelector('.game-score').innerHTML = score;
 
         for (let r = 0; r < rows; r++) {
@@ -202,6 +203,7 @@ function saveGameState() {
   try {
     localStorage.setItem('2048-board', JSON.stringify(board));
     localStorage.setItem('2048-score', score);
+    localStorage.setItem('2048-has-won', hasWon);
   } catch (e) {
     // Ignore error if localStorage is not available
   }
@@ -255,8 +257,9 @@ document.addEventListener('touchend', e => {
     loseMessage.classList.remove('hidden');
   }
 
-  if (isWinner()) {
+  if (!hasWon && isWinner()) {
     winMessage.classList.remove('hidden');
+    hasWon = true;
   }
 
   saveGameState();
@@ -271,6 +274,7 @@ button.addEventListener('click', () => {
     resetGame();
     localStorage.removeItem('2048-board');
     localStorage.removeItem('2048-score');
+    localStorage.removeItem('2048-has-won');
   } else {
     button.classList.remove('start');
     button.classList.add('restart');
